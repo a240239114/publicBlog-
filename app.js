@@ -6,12 +6,6 @@ var fs = require('fs');
 app.use(express.json())
 
 //引入路由
-// var newslist = require("./routes/newslist");
-// var good = require("./routes/good");
-// var image = require("./routes/image");
-// var comment = require("./routes/comment");
-
-
 //all
 var allComments = require("./routes/allComments");
 var allInfo = require("./routes/allInfo");
@@ -68,11 +62,6 @@ var cors = require ('cors')
 app.use(cors())
 
 //设置一级路由
-// app.use("/newslist", newslist);
-// app.use("/good", good);
-// app.use("/image", image);
-// app.use("/comment", comment);
-
 //all
 app.use("/allComments", allComments);
 app.use("/allInfo", allInfo);
@@ -121,11 +110,12 @@ app.use("/relatedArticleList", relatedArticleList);
 
 
 //设置页面路径
-app.get('/',(req,res)=>{
-   fs.readFile('./views/index.html',(err,data)=>{
-       //读取文件并渲染
-       res.send(data.toString());
-   });
-})
+// app.get('/',(req,res)=>{
+//    fs.readFile('./views/index.html',(err,data)=>{
+//        //读取文件并渲染
+//        res.send(data.toString());
+//    });
+// })
 
 module.exports = app;
+``

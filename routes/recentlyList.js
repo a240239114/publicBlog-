@@ -1,47 +1,38 @@
 //node框架
-var express = require ('express')
+var express = require('express')
 var router = express.Router()
 //数据库
-var mongoose = require ('mongoose')
+var mongoose = require('mongoose')
+//引入mongodb
+var MongoClient = require('mongodb').MongoClient;
 //comment集合
-var recentlyList = require ('../models/recentlyList')
+var allList = require('../models/allList')
 
-//连接数据库
-mongoose.connect('mongodb://localhost/local')
 
-//连接成功
-mongoose.connection.on('connected',()=>console.log('success'))
 
-//连接错误
-mongoose.connection.on('error',()=>console.log('err'))
 
-//连接失败
-mongoose.connection.on('disconnected',()=>console.log('disconnected'))
 
-//获取评论列表
-router.get('/',async (req,res)=>{
-    //数据库中查找所有数据,comemnt集合查找
-    const data = await recentlyList.find()
-    res.json({data})
-})
+//引入自动增长函数
+var getNextSequenceValue = require('../public/javascripts/getNextSequenceValue')
+var url = "mongodb://localhost:27017/";
 
-//获取评论分页
-router.get('/:id',async (req,res)=>{
-    //直接在url中传递参数
-    let id = req.params.id
-    //分页查询
-    const data = await recentlyList.find().limit(5).skip(5*(id-1))
-    // const data = await recentlyList.find()
-    res.json({data})
-})
-
-//添加评论
-router.post('/',async (req,res)=>{
-    //将数据保存起来,通过data传递参数,res.body是个对象
-    // await recentlyList.create(req.body)
-    new recentlyList(req.body).save()
-    // db.COLLECTION_NAME.insert(document)
-})
-
+MongoClient.connect(url, {
+    useNewUrlParser: true
+}, function (err, db) {
+    //获取到最近更新的十篇文章评论
+    router.get('/', async (req, res) => {
+        //数据库中查找所有数据,allList集合查找
+        if (err) throw err;
+        let keywords = req.params.keywords;
+        //获取数据库
+        var dbo = db.db("local");
+        //操作数据库中的集合
+        dbo.collection("allList").find().sort({ type: -1 }).limit(10).toArray(function (err, res) { // 返回集合中所有数据
+            if (err) throw err;
+            res.json({data})
+            // db.close();
+        });
+    })
+});
 
 module.exports = router;

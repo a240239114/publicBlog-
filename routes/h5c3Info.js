@@ -5,43 +5,54 @@ var router = express.Router()
 var mongoose = require ('mongoose')
 //comment集合
 var h5c3Info = require ('../models/h5c3Info')
+//引入mongodb
+var MongoClient = require('mongodb').MongoClient;
 
-//连接数据库
-mongoose.connect('mongodb://localhost/local')
 
-//连接成功
-mongoose.connection.on('connected',()=>console.log('success'))
+//引入自动增长函数
+var getNextSequenceValue = require('../public/javascripts/getNextSequenceValue')
+var url = "mongodb://localhost:27017/";
 
-//连接错误
-mongoose.connection.on('error',()=>console.log('err'))
+MongoClient.connect(url, {
+    useNewUrlParser: true
+}, function (err, db) {
+    //获取到单个h5c3文章详情
+    router.get('/:id', async (req, res) => {
+        //数据库中查找所有数据,h5c3Info集合查找
+        let id = parseInt(req.params.id);
+        console.log(id);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("local");
+        //操作数据库中的集合
+        dbo.collection("h5c3Info").find({"_id":id}).toArray(function (err, data) { // 返回集合中所有数据
+            if (err) throw err;
+            console.log(data);
+            res.json({data})
+            // db.close();
+        });
+    })
 
-//连接失败
-mongoose.connection.on('disconnected',()=>console.log('disconnected'))
 
-//获取评论列表
-router.get('/',async (req,res)=>{
-    //数据库中查找所有数据,comemnt集合查找
-    const data = await h5c3Info.find()
-    res.json({data})
-})
+    //添加到所有h5c3文章详情
+    router.post('/', async (req, res) => {
+        //数据库中查找所有数据,h5c3Info集合查找
+        if (err) throw err;
+        var dbo = db.db("local");
+        //自增函数
+        req.body["_id"] = await getNextSequenceValue("h5c3Infoid",db.db("local"));
 
-//获取评论分页
-router.get('/:id',async (req,res)=>{
-    //直接在url中传递参数
-    let id = req.params.id
-    //分页查询
-    const data = await h5c3Info.find().limit(5).skip(5*(id-1))
-    // const data = await h5c3Info.find()
-    res.json({data})
-})
+        console.log(req.body);
 
-//添加评论
-router.post('/',async (req,res)=>{
-    //将数据保存起来,通过data传递参数,res.body是个对象
-    // await h5c3Info.create(req.body)
-    new h5c3Info(req.body).save()
-    // db.COLLECTION_NAME.insert(document)
-})
+        dbo.collection("h5c3Info").insertOne(req.body, function(err, data) {
+            if (err) throw err;
+            console.log("文档插入成功");
+            // db.close();
+        });
+    })
+
+
+});
 
 
 module.exports = router;
