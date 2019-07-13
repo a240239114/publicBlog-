@@ -46,24 +46,49 @@ MongoClient.connect(url, {
         });
     })
 
-
     //添加到所有文章评论
     router.post('/', async (req, res) => {
         //数据库中查找所有数据,es6Comments集合查找
         if (err) throw err;
         var dbo = db.db("local");
+        //查询自增前的es6Commentsid的counters
+        var data = await dbo.collection("counters").find({
+            _id: "es6Commentsid"
+        }).toArray();
+        var sequence_value = data[0].sequence_value;
+
+
         //自增函数
         req.body["_id"] = await getNextSequenceValue("es6Commentsid",db.db("local"));
 
         console.log(req.body);
 
-        dbo.collection("es6Comments").insertOne(req.body, function(err, data) {
-            if (err) throw err;
-            console.log("文档插入成功");
-            // db.close();
-        });
-    })
 
+        if (req.body["_id"] != sequence_value) {
+            dbo.collection("es6Comments").insertOne(req.body, function (err, data) {
+                if (err) throw err;
+                console.log("文档插入成功");
+                // db.close();
+            });
+            res.json({
+                "status": 202,
+                "msg": "恭喜你,成功了!"
+            })
+        } else {
+            req.body["_id"] = parseInt(req.body["_id"] + 1);
+            dbo.collection("es6Comments").insertOne(req.body, function (err, data) {
+                if (err) throw err;
+                console.log("文档插入成功");
+                console.log(req.body);
+                // db.close();
+            });
+            res.json({
+                "status": 202,
+                "msg": "恭喜你,成功了!"
+            })
+        }
+
+    })
 
 });
 

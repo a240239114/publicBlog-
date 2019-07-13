@@ -10,6 +10,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
+    "forever-monitor": "^1.7.1",
     "http-errors": "~1.6.2",
     "mongodb": "^3.2.7",
     "mongoose": "^5.4.2",
@@ -18,6 +19,7 @@
     "pug": "2.0.0-beta11"
   },
   "devDependencies": {
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "forever-monitor": "^1.7.1"
   }
 }

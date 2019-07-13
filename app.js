@@ -116,6 +116,5 @@ app.use("/relatedArticleList", relatedArticleList);
 //        res.send(data.toString());
 //    });
 // })
-
 module.exports = app;
 ``

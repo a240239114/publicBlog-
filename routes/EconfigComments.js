@@ -54,18 +54,44 @@ MongoClient.connect(url, {
         //数据库中查找所有数据,EconfigComments集合查找
         if (err) throw err;
         var dbo = db.db("local");
+        //查询自增前的EconfigCommentsid的counters
+        var data = await dbo.collection("counters").find({
+            _id: "EconfigCommentsid"
+        }).toArray();
+        var sequence_value = data[0].sequence_value;
+
+
         //自增函数
         req.body["_id"] = await getNextSequenceValue("EconfigCommentsid",db.db("local"));
 
         console.log(req.body);
 
-        dbo.collection("EconfigComments").insertOne(req.body, function(err, data) {
-            if (err) throw err;
-            console.log("文档插入成功");
-            // db.close();
-        });
-    })
 
+        if (req.body["_id"] != sequence_value) {
+            dbo.collection("EconfigComments").insertOne(req.body, function (err, data) {
+                if (err) throw err;
+                console.log("文档插入成功");
+                // db.close();
+            });
+            res.json({
+                "status": 202,
+                "msg": "恭喜你,成功了!"
+            })
+        } else {
+            req.body["_id"] = parseInt(req.body["_id"] + 1);
+            dbo.collection("EconfigComments").insertOne(req.body, function (err, data) {
+                if (err) throw err;
+                console.log("文档插入成功");
+                console.log(req.body);
+                // db.close();
+            });
+            res.json({
+                "status": 202,
+                "msg": "恭喜你,成功了!"
+            })
+        }
+
+    })
 
 });
 
