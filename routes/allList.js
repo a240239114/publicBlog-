@@ -25,7 +25,12 @@ MongoClient.connect(url, {
         var dbo = db.db("local");
         //操作数据库中的集合
         dbo.collection("allList").find({}).toArray(function (err, data) { // 返回集合中所有数据
-            if (err) throw err;
+            if (err){
+             res.json({
+              status:301,
+                 msg:"不好意思"
+             })
+            };
             res.json({
                 data
             })
