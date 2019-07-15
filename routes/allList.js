@@ -27,13 +27,15 @@ MongoClient.connect(url, {
         dbo.collection("allList").find({}).toArray(function (err, data) { // 返回集合中所有数据
             if (err){
              res.json({
-              status:301,
+                 status:301,
                  msg:"不好意思"
              })
-            };
-            res.json({
-                data
-            })
+            }else{
+                res.json({
+                   data
+                })
+            }
+            
             // db.close();
         });
     })
