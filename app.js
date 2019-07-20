@@ -6,7 +6,7 @@ var fs = require('fs');
 app.use(express.json())
 
 //引入路由
-//all
+//all .../
 var allComments = require("./routes/allComments");
 var allInfo = require("./routes/allInfo");
 var allList = require("./routes/allList");
