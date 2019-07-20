@@ -1,5 +1,5 @@
 {
-    "publicBlogjiekou":[
+    "apps":[
         {
             "name":"publicBlogjiekou",
             "scripts":"./bin/www",
@@ -13,7 +13,7 @@
     ],
     "deploy":{
         "production":{
-            "user":"root",
+            "user":"ubuntu",
             "host":["49.234.203.202"],
             "port":"22",
             "ref":"origin/master",
