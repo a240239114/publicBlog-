@@ -1,0 +1,29 @@
+{
+    "publicBlogjiekou":[
+        {
+            "name":"publicBlogjiekou",
+            "scripts":"./bin/www",
+             "env":{
+                 "COMMON_VARIABLE":"true"
+             },
+             "env_production":{
+                 "NODE_ENV":"production"
+             }
+        }
+    ],
+    "deploy":{
+        "production":{
+            "user":"root",
+            "host":["49.234.203.202"],
+            "port":"22",
+            "ref":"origin/master",
+            "repo":"git@github.com:a240239114/publicBlogjiekou.git",
+            "path":"/www/publicBlogjiekou/production",
+            "ssh_options":"StrictHostKeyChecking=no",
+            "post-deploy":"npm install && pm2 startOrRestart ecosystem.json --env production",
+            "env":{
+                "NODE_ENV":"production"
+            }
+        }
+    }
+}
