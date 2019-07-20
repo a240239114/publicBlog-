@@ -22,7 +22,7 @@ MongoClient.connect(url, {
         //数据库中查找所有数据,h5c3Comments集合查找
         if (err) throw err;
         //获取数据库
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //操作数据库中的集合
         dbo.collection("h5c3Comments").find({}).toArray(function (err, data) { // 返回集合中所有数据
             if (err) throw err;
@@ -38,7 +38,7 @@ MongoClient.connect(url, {
         console.log(id);
         if (err) throw err;
         //获取数据库
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //操作数据库中的集合
         dbo.collection("h5c3Comments").find().skip(8*(id-1)).limit(8).toArray(function (err, data) { // 返回集合中所有数据
             if (err) throw err;
@@ -52,7 +52,7 @@ MongoClient.connect(url, {
     router.post('/', async (req, res) => {
         //数据库中查找所有数据,h5c3Comments集合查找
         if (err) throw err;
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //查询自增前的h5c3Commentsid的counters
         var data = await dbo.collection("counters").find({
             _id: "h5c3Commentsid"
@@ -61,7 +61,7 @@ MongoClient.connect(url, {
 
 
         //自增函数
-        req.body["_id"] = await getNextSequenceValue("h5c3Commentsid",db.db("local"));
+        req.body["_id"] = await getNextSequenceValue("h5c3Commentsid",db.db("publicBlog"));
 
         console.log(req.body);
 

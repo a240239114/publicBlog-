@@ -22,7 +22,7 @@ MongoClient.connect(url, {
         //数据库中查找所有数据allList集合查找
         if (err) throw err;
         //获取数据库
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //操作数据库中的集合
         dbo.collection("allList").find({}).toArray(function (err, data) { // 返回集合中所有数据
             if (err){
@@ -47,7 +47,7 @@ MongoClient.connect(url, {
         console.log(id);
         if (err) throw err;
         //获取数据库
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //操作数据库中的集合
         dbo.collection("allList").find().skip(8 * (id - 1)).limit(8).toArray(function (err, data) { // 返回集合中所有数据
             if (err) throw err;
@@ -63,14 +63,14 @@ MongoClient.connect(url, {
     router.post('/', async (req, res) => {
         //数据库中查找所有数据"allList集合查找
         if (err) throw err;
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //查询自增前的allListid的counters
         var data = await dbo.collection("counters").find({
             _id: "allListid"
         }).toArray();
         var sequence_value = data[0].sequence_value;
         //自增函数
-        req.body["_id"] = await getNextSequenceValue("allListid", db.db("local"));
+        req.body["_id"] = await getNextSequenceValue("allListid", db.db("publicBlog"));
 
 
         if (req.body["_id"] != sequence_value) {

@@ -25,7 +25,7 @@ MongoClient.connect(url, {
         if (err) throw err;
         let keywords = req.params.keywords;
         //获取数据库
-        var dbo = db.db("local");
+        var dbo = db.db("publicBlog");
         //操作数据库中的集合
         dbo.collection("allList").find().sort({ type: -1 }).limit(10).toArray(function (err, res) { // 返回集合中所有数据
             if (err) throw err;
