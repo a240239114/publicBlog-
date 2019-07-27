@@ -16,7 +16,7 @@ var url = "mongodb://localhost:27017/";
 MongoClient.connect(url, {
     useNewUrlParser: true
 }, function(err, db) {
-    //获取到单个vueCli文章详情
+    //获取到单个vueCli文章详情   查
     router.get('/:id', async(req, res) => {
         //数据库中查找所有数据,vueCliInfo集合查找
         let id = parseInt(req.params.id);
@@ -37,13 +37,12 @@ MongoClient.connect(url, {
         });
     })
 
-
-
-    //添加到所有文章详情
+    //添加到所有文章详情   增
     router.post('/', async (req, res) => {
         //数据库中查找所有数据,vueCliInfo集合查找
         if (err) throw err;
         var dbo = db.db("publicBlog");
+
         //查询自增前的vueCliInfoid的counters
         var data = await dbo.collection("counters").find({
             _id: "vueCliInfoid"
@@ -60,15 +59,6 @@ MongoClient.connect(url, {
                 _id: req.body["lastId"]
             }).toArray();
             req.body.lastTittle = data[0].tittle;
-
-            //自动添加next信息
-            // req.body["nextId"] = parseInt(req.body["_id"] + 1);
-            // const data = await dbo.collection("vueCliInfo").find({
-            //     _id: req.body["nextId"]
-            // }).toArray();
-            // req.body.lastTittle = data[0].tittle;
-
-            console.log(req.body);
 
             dbo.collection("vueCliInfo").insertOne(req.body, function (err, data) {
                 if (err) throw err;
@@ -89,8 +79,6 @@ MongoClient.connect(url, {
             }).toArray();
             req.body.lastTittle = data[0].tittle;
 
-
-
             req.body["_id"] = parseInt(req.body["_id"] + 1);
             dbo.collection("vueCliInfo").insertOne(req.body, function (err, data) {
                 if (err) throw err;
@@ -107,7 +95,28 @@ MongoClient.connect(url, {
 
     })
 
-
+    //删除文章    删
+    router.delete('/:id', async(req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        let id = parseInt(req.params.id);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+        //操作数据库中的集合
+        dbo.collection("vueCliInfo").deleteOne({
+            "_id": id
+        },function(err,obj){
+            if (err) throw err;
+            // console.log("文档删除成功");
+            // db.close();
+            res.json({
+                data:{
+                    status:202,
+                    msg:"成功删除!"
+                }
+            })
+        })
+    })
 });
 
 
