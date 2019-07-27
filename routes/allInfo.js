@@ -25,7 +25,7 @@ MongoClient.connect(url, {
 
         //数据库中查找所有数据,allInfo集合查找
         let id = parseInt(req.params.id);
-        // console.log(id);
+        // console.log(id);asdasd 
         if (err) throw err;
         //获取数据库
         var dbo = db.db("publicBlog");
