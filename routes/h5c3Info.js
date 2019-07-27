@@ -31,7 +31,7 @@ MongoClient.connect(url, {
             if (err) throw err;
             console.log(data);
             res.json({
-                    data
+                    data:data[0]
                 })
                 // db.close();
         });
