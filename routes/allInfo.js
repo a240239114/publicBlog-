@@ -112,6 +112,30 @@ MongoClient.connect(url, {
     })
 
 
+    //删除文章
+    router.delete('/:id', async(req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        let id = parseInt(req.params.id);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+        //操作数据库中的集合
+        dbo.collection("allInfo").deleteOne({
+            "_id": id
+        },function(err,obj){
+            if (err) throw err;
+            // console.log("文档删除成功");
+            // db.close();
+            res.json({
+                data:{
+                    status:202,
+                    msg:"成功删除!"
+                }
+            })
+        })
+    })
+
+
 });
 
 
