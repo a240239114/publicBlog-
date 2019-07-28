@@ -24,21 +24,25 @@ MongoClient.connect(url, {
         //数据库中查找所有数据,allList集合查找
         if (err) throw err;
         let keywords = req.params.keywords;
+        // console.log("keywords=======>"+keywords)
         //获取数据库
         var dbo = db.db("publicBlog");
         //操作数据库中的集合
-        dbo.collection("allList").find({}).toArray(function (err, res) { // 返回集合中所有数据
+        dbo.collection("allList").find({}).toArray(function (err, result) { // 返回集合中所有数据
             if (err) throw err;
+            console.log(result);
             //创建新数组
             let data = [];
-            res.forEach(function(item){
-                 if(keywords.indexOf(item)!=-1){//存在
-                    arr.push(item)
+            result.forEach(function(item){
+                // console.log("item.keywords=======>"+item.keywords)
+                // console.log("indexOf=======>"+"11111".indexOf('1'));
+                // console.log("keywords======>"+keywords)
+                 if(item.keywords.search(keywords) != -1){//存在
+                    data.push(item)
                  }
             })
 
             res.json({data})
-            // db.close();
         });
     })
 });

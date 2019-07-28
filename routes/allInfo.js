@@ -10,10 +10,12 @@ var MongoClient = require('mongodb').MongoClient;
 
 
 
-
-
-//引入自动增长函数
+//引入自增函数
 var getNextSequenceValue = require('../public/javascripts/getNextSequenceValue')
+//引入归零函数
+var getToZeroSequenceValue = require('../public/javascripts/getToZeroSequenceValue')
+
+//根路径
 var url = "mongodb://localhost:27017/";
 
 MongoClient.connect(url, {
@@ -22,10 +24,8 @@ MongoClient.connect(url, {
 
     //获取到单个文章详情
     router.get('/:id', async (req, res) => {
-
         //数据库中查找所有数据,allInfo集合查找
         let id = parseInt(req.params.id);
-        // console.log(id);asdasd 
         if (err) throw err;
         //获取数据库
         var dbo = db.db("publicBlog");
@@ -36,12 +36,11 @@ MongoClient.connect(url, {
             if (err) throw err;
             // console.log(data);
             res.json({
-                data:data[0]
+                data: data[0]
             })
             // db.close();
         });
     })
-
 
     //添加到所有文章详情
     router.post('/', async (req, res) => {
@@ -58,21 +57,17 @@ MongoClient.connect(url, {
         req.body["_id"] = await getNextSequenceValue("allInfoid", db.db("publicBlog"));
 
         if (req.body["_id"] != sequence_value) {
-            //自动添加last信息
-            req.body["lastId"] = parseInt(req.body["_id"] - 1);
-            const data = await dbo.collection("allInfo").find({
-                _id: req.body["lastId"]
-            }).toArray();
-            req.body.lastTittle = data[0].tittle;
+            if (sequence_value != 0) {
+                //自动添加last信息
+                // req.body["lastId"] = parseInt(req.body["_id"] - 1);
+                req.body["lastId"] = parseInt(sequence_value);
+                const data = await dbo.collection("allInfo").find({
+                    _id: req.body["lastId"]
+                }).toArray();
+                req.body.lastTittle = data[0].tittle;
 
-            //自动添加next信息
-            // req.body["nextId"] = parseInt(req.body["_id"] + 1);
-            // const data = await dbo.collection("allInfo").find({
-            //     _id: req.body["nextId"]
-            // }).toArray();
-            // req.body.lastTittle = data[0].tittle;
-
-            console.log(req.body);
+                console.log(req.body);
+            }
 
             dbo.collection("allInfo").insertOne(req.body, function (err, data) {
                 if (err) throw err;
@@ -87,12 +82,14 @@ MongoClient.connect(url, {
             })
         } else {
             //自动添加last信息
-            req.body["lastId"] = parseInt(req.body["_id"] - 1);
-            const data = await dbo.collection("allInfo").find({
-                _id: req.body["lastId"]
-            }).toArray();
-            req.body.lastTittle = data[0].tittle;
-
+            if (sequence_value != 0) {
+                // req.body["lastId"] = parseInt(req.body["_id"] - 1);
+                req.body["lastId"] = parseInt(sequence_value);
+                const data = await dbo.collection("allInfo").find({
+                    _id: req.body["lastId"]
+                }).toArray();
+                req.body.lastTittle = data[0].tittle;
+            }
 
 
             req.body["_id"] = parseInt(req.body["_id"] + 1);
@@ -111,31 +108,105 @@ MongoClient.connect(url, {
 
     })
 
+    //修改文章
+    router.post('/:id', async (req, res) => {
+        let id = parseInt(req.params.id);
+        console.log(id);
+        console.log(req.body);
+        if (err) throw err;
+        var dbo = db.db("publicBlog");
+        dbo.collection("allInfo").updateOne({
+            _id: id
+        }, {
+            $set: req.body
+        }, function (err, obj) {
+            if (err) throw err;
+            console.log("文档更新成功");
+            // res.json({
+            //     status:202,
+            //     msg:"修改成功"
+            // })
+            res.json({
+                "status": 202,
+                "msg": "恭喜你,成功了!"
+            })
+            // db.close();
+        });
+    })
 
-    //删除文章
-    router.delete('/:id', async(req, res) => {
+    //删除单个   ID
+    router.delete('/id/:id', async (req, res) => {
         //数据库中查找所有数据,vueCliInfo集合查找
         let id = parseInt(req.params.id);
+        // console.log(id, tittle);
         if (err) throw err;
         //获取数据库
         var dbo = db.db("publicBlog");
-        //操作数据库中的集合
+
+
+        //删除当前的数据 ID
         dbo.collection("allInfo").deleteOne({
-            "_id": id
-        },function(err,obj){
+            _id: id
+        }, function (err, obj) {
             if (err) throw err;
-            // console.log("文档删除成功");
-            // db.close();
             res.json({
-                data:{
-                    status:202,
-                    msg:"成功删除!"
+                data: {
+                    status: 202,
+                    msg: "成功删除!"
                 }
             })
         })
     })
 
+    //删除文章 Tittle 
+    router.delete('/tittle/:tittle', async (req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        let tittle = req.params.tittle;
+        console.log(tittle);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
 
+
+        //删除当前的数据 
+        dbo.collection("allInfo").deleteOne({
+            tittle: tittle
+        }, function (err, obj) {
+            if (err) throw err;
+            res.json({
+                data: {
+                    status: 202,
+                    msg: "成功删除!"
+                }
+            })
+        })
+    })
+
+    //删除全部
+    router.delete('/', async (req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        // let id = parseInt(req.params.id);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+
+        //删除所有数据
+        dbo.collection("allInfo").deleteMany({
+            _id: {
+                $gte: 0
+            }
+        }, function (err, obj) {
+            if (err) throw err;
+            console.log(obj.result.n + " 条文档被删除");
+            //SequenceValue归零
+            getToZeroSequenceValue("allInfoid", db.db("publicBlog"))
+            // db.close();
+            res.json({
+                status: 202,
+                msg: '全部删除成功'
+            })
+        });
+    })
 });
 
 

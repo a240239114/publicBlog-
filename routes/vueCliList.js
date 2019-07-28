@@ -10,40 +10,68 @@ var MongoClient = require('mongodb').MongoClient;
 
 
 
-
 //引入自动增长函数
 var getNextSequenceValue = require('../public/javascripts/getNextSequenceValue')
+var getToZeroSequenceValue = require('../public/javascripts/getToZeroSequenceValue')
 var url = "mongodb://localhost:27017/";
 
 MongoClient.connect(url, {
     useNewUrlParser: true
 }, function (err, db) {
-    //获取到所有文章评论列表
+    //获取到所有文章列表
     router.get('/', async (req, res) => {
-        //数据库中查找所有数据,vueCliList集合查找
+        //数据库中查找所有数据vueCliList集合查找
         if (err) throw err;
         //获取数据库
         var dbo = db.db("publicBlog");
         //操作数据库中的集合
         dbo.collection("vueCliList").find({}).toArray(function (err, data) { // 返回集合中所有数据
-            if (err) throw err;
-            res.json({
-                data
-            })
+            if (err) {
+                res.json({
+                    status: 301,
+                    msg: "不好意思"
+                })
+            } else {
+                res.json({
+                    data
+                })
+            }
+
             // db.close();
         });
     })
 
-    //获取到文章评论列表分页,一次获得8条数据
-    router.get('/:id', async (req, res) => {
-        //数据库中查找所有数据,vueCliList集合查找
-        let id = req.params.id;
-        console.log(id);
+    //获取单个文章 ID
+    router.get('/id/:id', async (req, res) => {
+        //数据库中查找所有数据,allInfo集合查找
+        let id = parseInt(req.params.id);
         if (err) throw err;
         //获取数据库
         var dbo = db.db("publicBlog");
         //操作数据库中的集合
-        dbo.collection("vueCliList").find().skip(8 * (id - 1)).limit(8).toArray(function (err, data) { // 返回集合中所有数据
+        dbo.collection("vueCliList").find({
+            _id: id
+        }).toArray(function (err, data) { // 返回集合中所有数据
+            if (err) throw err;
+            // console.log(data);
+            res.json({
+                data: data[0]
+            })
+            // db.close();
+        });
+    })
+
+
+    //获取到文章列表分页,一次获得8条数据
+    router.get('/index/:index', async (req, res) => {
+        //数据库中查找所有数据vueCliList集合查找
+        let index = req.params.index;
+        console.log(index);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+        //操作数据库中的集合
+        dbo.collection("vueCliList").find().skip(8 * (index - 1)).limit(8).toArray(function (err, data) { // 返回集合中所有数据
             if (err) throw err;
             res.json({
                 data
@@ -52,10 +80,9 @@ MongoClient.connect(url, {
         });
     })
 
-
-    //添加到所有文章评论
+    //添加到所有文章
     router.post('/', async (req, res) => {
-        //数据库中查找所有数据,vueCliList集合查找
+        //数据库中查找所有数据"vueCliList集合查找
         if (err) throw err;
         var dbo = db.db("publicBlog");
         //查询自增前的vueCliListid的counters
@@ -83,7 +110,6 @@ MongoClient.connect(url, {
                 // db.close();
             });
 
-
             //给出响应
             res.json({
                 "status": 202,
@@ -99,13 +125,114 @@ MongoClient.connect(url, {
                 // db.close();
             });
 
-
             //给出响应
             res.json({
                 "status": 202,
                 "msg": "成功啦"
             })
         }
+
+    })
+
+
+    //修改文章
+    router.post('/:id', async (req, res) => {
+        let id = parseInt(req.params.id);
+        console.log(id);
+        console.log(req.body);
+        if (err) throw err;
+        var dbo = db.db("publicBlog");
+        dbo.collection("vueCliList").updateOne({
+            _id: id
+        }, {
+            $set: req.body
+        }, function (err, obj) {
+            if (err) throw err;
+            console.log("文档更新成功");
+            // res.json({
+            //     status:202,
+            //     msg:"修改成功"
+            // })
+            res.json({
+                "status": 202,
+                "msg": "恭喜你,成功了!"
+            })
+            // db.close();
+        });
+    })
+
+    //删除单个   ID
+    router.delete('/id/:id', async (req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        let id = parseInt(req.params.id);
+        // console.log(id, tittle);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+
+
+        //删除当前的数据 ID
+        dbo.collection("vueCliList").deleteOne({
+            _id: id
+        }, function (err, obj) {
+            if (err) throw err;
+            res.json({
+                data: {
+                    status: 202,
+                    msg: "成功删除!"
+                }
+            })
+        })
+    })
+
+    //删除文章 Tittle 
+    router.delete('/tittle/:tittle', async (req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        let tittle = req.params.tittle;
+        console.log(tittle);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+
+
+        //删除当前的数据 
+        dbo.collection("vueCliList").deleteOne({
+            tittle: tittle
+        }, function (err, obj) {
+            if (err) throw err;
+            res.json({
+                data: {
+                    status: 202,
+                    msg: "成功删除!"
+                }
+            })
+        })
+    })
+
+    //删除全部
+    router.delete('/', async (req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        // let id = parseInt(req.params.id);
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+
+        //删除所有数据
+        dbo.collection("vueCliList").deleteMany({
+            _id: {
+                $gte: 0
+            }
+        }, function (err, obj) {
+            if (err) throw err;
+            console.log(obj.result.n + " 条文档被删除");
+            //SequenceValue归零
+            getToZeroSequenceValue("vueCliListid", db.db("publicBlog"))
+            // db.close();
+            res.json({
+                status: 202,
+                msg: '全部删除成功'
+            })
+        });
     })
 
 
