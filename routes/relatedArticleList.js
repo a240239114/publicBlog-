@@ -20,29 +20,28 @@ MongoClient.connect(url, {
     useNewUrlParser: true
 }, function (err, db) {
     //获取到相关联文章评论列表
-    router.get('/:keywords', async (req, res) => {
+    router.get('/:keywords/:index', async (req, res) => {
         //数据库中查找所有数据,allList集合查找
         if (err) throw err;
         let keywords = req.params.keywords;
+        let index = req.params.index;
         // console.log("keywords=======>"+keywords)
         //获取数据库
         var dbo = db.db("publicBlog");
         //操作数据库中的集合
-        dbo.collection("allList").find({}).toArray(function (err, result) { // 返回集合中所有数据
+        dbo.collection("allList").find().skip((index-1) * 8).limit(8).toArray(function (err, result) { // 返回集合中所有数据
             if (err) throw err;
-            console.log(result);
             //创建新数组
             let data = [];
             result.forEach(function(item){
-                // console.log("item.keywords=======>"+item.keywords)
-                // console.log("indexOf=======>"+"11111".indexOf('1'));
-                // console.log("keywords======>"+keywords)
                  if(item.keywords.search(keywords) != -1){//存在
                     data.push(item)
                  }
             })
-
-            res.json({data})
+            console.log(result);
+            res.json({
+                data:result
+            })
         });
     })
 });
