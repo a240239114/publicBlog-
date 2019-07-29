@@ -50,31 +50,20 @@ MongoClient.connect(url, {
                 _id: parseInt(item)
             }
         })
-        //循环遍历数组
-        var randomData = [];
-
-        var getRandomData = (resolve, reject) => {
-
-            //循环遍历
-            arr.map(function (item, index) {
-
-                dbo.collection("allList").find(item).toArray(function (err, res1) {
-                    // console.log(res[0]);
-                    randomData[index] = res[0];
-                });
-
-                
-                resolve(randomData)
-            })
-
-        }
-
-        new Promise(getRandomData).then(res2 => {
-            console.log(res2);
+        console.log(arr);  
+        
+        dbo.collection("allList").find({
+            $or:arr
+        }).toArray(function(err,result){
+            if (err) throw err;
+            console.log(result);
             res.json({
-                "res": res2
+                "status":202,
+                 "data":result
             })
         })
+
+
 
     })
 
