@@ -20,7 +20,7 @@ MongoClient.connect(url, {
     useNewUrlParser: true
 }, function (err, db) {
     //获取到相关联文章评论列表
-    router.get('/:keywords/:index', async (req, res) => {
+    router.get('/:keywords/index/:index', async (req, res) => {
         //数据库中查找所有数据,allList集合查找
         if (err) throw err;
         let keywords = req.params.keywords;
