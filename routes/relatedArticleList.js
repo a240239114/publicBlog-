@@ -29,7 +29,7 @@ MongoClient.connect(url, {
         //获取数据库
         var dbo = db.db("publicBlog");
         //操作数据库中的集合
-        dbo.collection("allList").find().skip((index-1) * 8).limit(8).toArray(function (err, result) { // 返回集合中所有数据
+        dbo.collection("allList").find().toArray(function (err, result) { // 返回集合中所有数据
             if (err) throw err;
             //创建新数组
             let data = [];
@@ -38,9 +38,35 @@ MongoClient.connect(url, {
                     data.push(item)
                  }
             })
-            console.log(result);
+            data = data.slice((index-1)*8,index*8);
+            console.log(data);
             res.json({
-                data:result
+                data:data
+            })
+        });
+    })
+
+    router.get('/:keywords', async (req, res) => {
+        //数据库中查找所有数据,allList集合查找
+        if (err) throw err;
+        let keywords = req.params.keywords;
+        let index = req.params.index;
+        // console.log("keywords=======>"+keywords)
+        //获取数据库
+        var dbo = db.db("publicBlog");
+        //操作数据库中的集合
+        dbo.collection("allList").find().toArray(function (err, result) { // 返回集合中所有数据
+            if (err) throw err;
+            //创建新数组
+            let data = [];
+            result.forEach(function(item,index){
+                 if(item.keywords.search(keywords) != -1){//存在
+                    data.push(item);
+                 }
+            })
+            console.log(data);
+            res.json({
+                data:data
             })
         });
     })
