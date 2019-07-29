@@ -19,7 +19,7 @@ var url = "mongodb://localhost:27017/";
 MongoClient.connect(url, {
     useNewUrlParser: true
 }, function (err, db) {
-    //获取到相关联文章评论列表
+    //获取到相关联文章评论列表且分页
     router.get('/:keywords/index/:index', async (req, res) => {
         //数据库中查找所有数据,allList集合查找
         if (err) throw err;
@@ -33,19 +33,20 @@ MongoClient.connect(url, {
             if (err) throw err;
             //创建新数组
             let data = [];
-            result.forEach(function(item){
-                 if(item.keywords.search(keywords) != -1){//存在
+            result.forEach(function (item) {
+                if (item.keywords.search(keywords) != -1) { //存在
                     data.push(item)
-                 }
+                }
             })
-            data = data.slice((index-1)*8,index*8);
+            data = data.slice((index - 1) * 8, index * 8);
             console.log(data);
             res.json({
-                data:data
+                data: data
             })
         });
     })
 
+    //获取到相关联文章评论列表
     router.get('/:keywords', async (req, res) => {
         //数据库中查找所有数据,allList集合查找
         if (err) throw err;
@@ -59,14 +60,14 @@ MongoClient.connect(url, {
             if (err) throw err;
             //创建新数组
             let data = [];
-            result.forEach(function(item,index){
-                 if(item.keywords.search(keywords) != -1){//存在
+            result.forEach(function (item, index) {
+                if (item.keywords.search(keywords) != -1) { //存在
                     data.push(item);
-                 }
+                }
             })
             console.log(data);
             res.json({
-                data:data
+                data: data
             })
         });
     })
