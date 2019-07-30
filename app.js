@@ -44,6 +44,8 @@ var randomList = require("./routes/randomList");
 var recentlyList = require("./routes/recentlyList");
 //relatedArticle
 var relatedArticleList = require("./routes/relatedArticleList");
+//wonderfulComments
+var wonderfulComments = require("./routes/wonderfulComments");
 
 
 //公开资源
@@ -100,6 +102,8 @@ app.use("/randomList", randomList);
 app.use("/recentlyList", recentlyList);
 //relatedArticle
 app.use("/relatedArticleList", relatedArticleList);
+//wonderfulComments
+app.use("/wonderfulComments", wonderfulComments);
 
 
 
