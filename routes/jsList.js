@@ -196,7 +196,7 @@ MongoClient.connect(url, {
 
 
         //删除当前的数据 
-        dbo.collection("jsList").deleteOne({
+        dbo.collection("jsList").deleteMany({
             tittle: tittle
         }, function (err, obj) {
             if (err) throw err;

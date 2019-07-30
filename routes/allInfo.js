@@ -169,7 +169,7 @@ MongoClient.connect(url, {
 
 
         //删除当前的数据 
-        dbo.collection("allInfo").deleteOne({
+        dbo.collection("allInfo").deleteMany({
             tittle: tittle
         }, function (err, obj) {
             if (err) throw err;
