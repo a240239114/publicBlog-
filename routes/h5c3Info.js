@@ -171,6 +171,8 @@ MongoClient.connect(url, {
     router.delete('/tittle/:tittle', async (req, res) => {
         //数据库中查找所有数据,vueCliInfo集合查找
         let tittle = req.params.tittle;
+        //查询集合的数量
+
         console.log(tittle);
         if (err) throw err;
         //获取数据库
@@ -180,7 +182,12 @@ MongoClient.connect(url, {
         //删除当前的数据 
         dbo.collection("h5c3Info").deleteMany({
             tittle: tittle
-        }, function (err, obj) {
+        }, async function (err, obj) {
+            var count = await dbo.collection("h5c3Info").find().count();
+            if (count == 0) {
+                getToZeroSequenceValue("h5c3Infoid", db.db("publicBlog"))
+            }
+
             if (err) throw err;
             res.json({
                 data: {
@@ -190,7 +197,6 @@ MongoClient.connect(url, {
             })
         })
     })
-
 
 
     //删除全部

@@ -43,7 +43,7 @@ MongoClient.connect(url, {
 
     //获取单个文章 ID
     router.get('/id/:id', async (req, res) => {
-        //数据库中查找所有数据,allInfo集合查找
+        //数据库中查找所有数据,bugList集合查找
         let id = parseInt(req.params.id);
         if (err) throw err;
         //获取数据库
@@ -189,6 +189,8 @@ MongoClient.connect(url, {
     router.delete('/tittle/:tittle', async (req, res) => {
         //数据库中查找所有数据,vueCliInfo集合查找
         let tittle = req.params.tittle;
+        //查询集合的数量
+
         console.log(tittle);
         if (err) throw err;
         //获取数据库
@@ -198,7 +200,12 @@ MongoClient.connect(url, {
         //删除当前的数据 
         dbo.collection("bugList").deleteMany({
             tittle: tittle
-        }, function (err, obj) {
+        }, async function (err, obj) {
+            var count = await dbo.collection("bugList").find().count();
+            if (count == 0) {
+                getToZeroSequenceValue("bugListid", db.db("publicBlog"))
+            }
+
             if (err) throw err;
             res.json({
                 data: {
