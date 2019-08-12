@@ -94,6 +94,60 @@ MongoClient.connect(url, {
 
     })
 
+
+
+
+        //删除单个   ID
+        router.delete('/:id', async (req, res) => {
+            //数据库中查找所有数据,vueCliInfo集合查找
+            let id = parseInt(req.params.id);
+            console.log(id);
+            if (err) throw err;
+            //获取数据库
+            var dbo = db.db("publicBlog");
+    
+    
+            //删除当前的数据 ID
+            dbo.collection("jsComments").deleteOne({
+                _id: id
+            }, function (err, obj) {
+                if (err) throw err;
+                res.json({
+                    data: {
+                        status: 202,
+                        msg: "成功删除!"
+                    }
+                })
+            })
+        })
+    
+    
+        //删除全部
+        router.delete('/', async (req, res) => {
+            //数据库中查找所有数据,vueCliInfo集合查找
+            // let id = parseInt(req.params.id);
+            if (err) throw err;
+            //获取数据库
+            var dbo = db.db("publicBlog");
+    
+            //删除所有数据
+            dbo.collection("jsComments").deleteMany({
+                _id: {
+                    $gte: 0
+                }
+            }, function (err, obj) {
+                if (err) throw err;
+                console.log(obj.result.n + " 条文档被删除");
+                //SequenceValue归零
+                getToZeroSequenceValue("jsCommentsid", db.db("publicBlog"))
+                // db.close();
+                res.json({
+                    status: 202,
+                    msg: '全部删除成功'
+                })
+            });
+        })
+
 });
 
 
