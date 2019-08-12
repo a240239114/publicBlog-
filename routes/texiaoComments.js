@@ -99,6 +99,7 @@ MongoClient.connect(url, {
     })
 
 
+  
     //删除单个   ID
     router.delete('/:id', async (req, res) => {
         //数据库中查找所有数据,vueCliInfo集合查找
@@ -126,6 +127,8 @@ MongoClient.connect(url, {
 
     //删除全部
     router.delete('/', async (req, res) => {
+        //数据库中查找所有数据,vueCliInfo集合查找
+        // let id = parseInt(req.params.id);
         if (err) throw err;
         //获取数据库
         var dbo = db.db("publicBlog");
@@ -140,12 +143,10 @@ MongoClient.connect(url, {
             console.log(obj.result.n + " 条文档被删除");
             //SequenceValue归零
             getToZeroSequenceValue("texiaoCommentsid", db.db("publicBlog"))
-
+            // db.close();
             res.json({
-                data: {
-                    status: 202,
-                    msg: "成功删除!"
-                }
+                status: 202,
+                msg: '全部删除成功'
             })
         });
     })
