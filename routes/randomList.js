@@ -30,44 +30,59 @@ MongoClient.connect(url, {
 
         //查询集合的数量
         var count = await dbo.collection("allList").find().count();
-        
+        console.log(count)
+
         //随机产生10个数字并且范围是在allList范围以内,并且数据格式如下[{_id:"xxx"},{_id:"yyy"}]
         // console.log("count======>"+count)
 
-        function sjsz(num,x) {
+        function sjsz(num, x) {
             var ary = []; //创建一个空数组用来保存随机数组
-            
-            for (var i = 0; i < num; i++) { //按照正常排序填充数组
-                var count = Math.ceil(Math.random() * x);
-                //循环判断是否数组含有count的重复值
-                if (ary.indexOf(count) == -1) { //不包含count
-                    ary[i] = count;
-                } else {
-                    i--;
+            if (count > 8) {
+                for (var i = 0; i < num; i++) { //按照正常排序填充数组
+                    var count = Math.ceil(Math.random() * x);
+                    //循环判断是否数组含有count的重复值
+                    if (ary.indexOf(count) == -1) { //不包含count
+                        ary[i] = count;
+                    } else {
+                        i--;
+                    }
                 }
+
+                // console.log(ary)
+                return ary; //返回数组
+            } else {
+                for (var i = 0; i < num; i++) { //按照正常排序填充数组
+                    var count = Math.ceil(Math.random() * x);
+                        ary[i] = count;
+                }
+
+                // console.log(ary)
+                return ary; //返回数组
             }
 
-            // console.log(ary)
-            return ary; //返回数组
         }
 
-        var arr = sjsz(10,parseInt(count)).map(function (item) {
+
+        var arr = sjsz(10, count).map(function (item) {
             return item = {
                 _id: parseInt(item)
             }
         })
-        // console.log(arr);  
-        
+        console.log(arr);
+
+
         dbo.collection("allList").find({
-            $or:arr
-        }).toArray(function(err,result){
+            $or: arr
+        }).toArray(function (err, result) {
             if (err) throw err;
             // console.log(result);
             res.json({
-                "status":202,
-                 "data":result
+                "status": 202,
+                "data": result
             })
         })
+
+
 
     })
 

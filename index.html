@@ -10,23 +10,35 @@
 
 <body>
     <script>
-        function sjsz(num) {
+        function sjsz(num, x) {
             var ary = []; //创建一个空数组用来保存随机数组
-
-            for (var i = 0; i < num; i++) { //按照正常排序填充数组
-                var count = Math.ceil(Math.random() * 100);
-                //循环判断是否数组含有count的重复值
-                if (ary.indexOf(count) == -1) { //不包含count
-                    ary[i] = count;
-                } else {
-                    i--;
+            if (count > 8) {
+                for (var i = 0; i < num; i++) { //按照正常排序填充数组
+                    var count = Math.ceil(Math.random() * x);
+                    //循环判断是否数组含有count的重复值
+                    if (ary.indexOf(count) == -1) { //不包含count
+                        ary[i] = count;
+                    } else {
+                        i--;
+                    }
                 }
+
+                // console.log(ary)
+                return ary; //返回数组
+            } else {
+                for (var i = 0; i < num; i++) { //按照正常排序填充数组
+                    var count = Math.ceil(Math.random() * x);
+                        ary[i] = count;
+                }
+
+                // console.log(ary)
+                return ary; //返回数组
             }
 
-            // console.log(ary)
-            return ary; //返回数组
         }
-        var arr = sjsz(10).map(function (item) {
+
+
+        var arr = sjsz(10, count).map(function (item) {
             return item = {
                 _id: parseInt(item)
             }

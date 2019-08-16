@@ -24,6 +24,53 @@ MongoClient.connect(url, {
     useNewUrlParser: true
 }, function (err, db) {
 
+      //获取到所有文章列表
+      router.get('/', async (req, res) => {
+        //数据库中查找所有数据allList集合查找
+        if (err) throw err;
+        //获取数据库
+        var dbo = db.db("publicBlog");
+        //操作数据库中的集合
+        dbo.collection("es6Info").find({}).toArray(function (err, data) { // 返回集合中所有数据
+            if (err) {
+                res.json({
+                    status: 301,
+                    msg: "不好意思"
+                })
+            } else {
+                res.json({
+                    data
+                })
+            }
+
+            // db.close();
+        });
+    })
+
+    //获取文档的数量
+    router.get('/count/count', async (req, res) => {
+        //数据库中查找所有数据allList集合查找
+        // if (err) throw err;
+        //获取数据库
+        console.log("被调用啦");
+        var dbo = db.db("publicBlog");
+        //操作数据库中的集合
+        dbo.collection("es6Info").countDocuments({}, function (err, data) { // 返回集合中所有数据
+            console.log(data);
+            if (err) {
+                res.json({
+                    status: 301,
+                    msg: "不好意思"
+                })
+            } else {
+                res.json({
+                    data
+                })
+            }
+
+        });
+    })
+
     //获取到单个文章详情
     router.get('/:id', async (req, res) => {
 
