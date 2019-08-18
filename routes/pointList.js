@@ -1,3 +1,15 @@
+//node框架
+var express = require('express')
+var router = express.Router()
+//数据库
+var mongoose = require('mongoose')
+//comment集合
+var pointList = require('../models/pointList')
+//引入mongodb
+var MongoClient = require('mongodb').MongoClient;
+
+
+
 //引入自动增长函数
 var getNextSequenceValue = require('../public/javascripts/getNextSequenceValue')
 var getToZeroSequenceValue = require('../public/javascripts/getToZeroSequenceValue')

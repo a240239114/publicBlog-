@@ -41,7 +41,7 @@ var vueCliList = require("./routes/vueCliList");
 //point
 var pointComments = require("./routes/pointComments");
 var pointInfo = require("./routes/pointInfo");
-var pointList = require("./routes/vueCliList");
+var pointList = require("./routes/pointList");
 
 //random
 var randomList = require("./routes/randomList");
