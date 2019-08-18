@@ -34,7 +34,7 @@ MongoClient.connect(url, {
             //创建新数组
             let data = [];
             result.forEach(function (item) {
-                if (item.keywords.search(keywords) != -1) { //存在
+                if (item.tittle.search(keywords) != -1) { //存在
                     data.push(item)
                 }
             })
