@@ -38,6 +38,11 @@ var texiaoList = require("./routes/texiaoList");
 var vueCliComments = require("./routes/vueCliComments");
 var vueCliInfo = require("./routes/vueCliInfo");
 var vueCliList = require("./routes/vueCliList");
+//point
+var pointComments = require("./routes/pointComments");
+var pointInfo = require("./routes/pointInfo");
+var pointList = require("./routes/vueCliList");
+
 //random
 var randomList = require("./routes/randomList");
 //recently
@@ -96,6 +101,11 @@ app.use("/texiaoList", texiaoList);
 app.use("/vueCliComments", vueCliComments);
 app.use("/vueCliInfo", vueCliInfo);
 app.use("/vueCliList", vueCliList);
+//point
+app.use("/pointComments", pointComments);
+app.use("/pointInfo", pointInfo);
+app.use("/pointList", pointList);
+
 //random
 app.use("/randomList", randomList);
 //recently
