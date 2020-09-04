@@ -12,7 +12,7 @@
     "express": "~4.16.0",
     "forever-monitor": "^1.7.1",
     "http-errors": "~1.6.2",
-    "mongodb": "^3.2.7",
+    "mongodb": "^3.1.13",
     "mongoose": "^5.4.2",
     "morgan": "~1.9.0",
     "multer": "^1.4.1",
